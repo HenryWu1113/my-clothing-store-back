@@ -46,7 +46,7 @@ app.use((_: any, req: any, res: any, next: any) => {
 
 app.use('/users', usersRouter)
 
-app.all('*', (req, res) => {
+app.all('*', (req: express.Request, res: express.Response) => {
   res.status(404).send({ success: false, message: '找不到' })
 })
 
