@@ -27,22 +27,26 @@ const schema = new mongoose.Schema(
       default: 0
     },
     discountRate: {
-      type: Float32Array,
+      type: Number,
       default: 0.0
     },
     gender: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'categories'
+      ref: 'categories',
+      required: true
     },
     clothing: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'categories'
+      ref: 'categories',
+      required: true
     },
     colors: {
-      type: [String]
+      type: [String],
+      required: true
     },
     sizes: {
-      type: [String]
+      type: [String],
+      required: true
     },
     rating: {
       type: [

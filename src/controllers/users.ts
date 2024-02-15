@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/non-nullable-type-assertion-style */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/consistent-type-imports */
@@ -7,6 +8,7 @@ import users from '../models/users'
 import bcrypt from 'bcrypt'
 import express from 'express'
 import jwt from 'jsonwebtoken'
+import _ from 'lodash'
 
 export const register = async (req: express.Request, res: express.Response) => {
   const password: string = req.body.password
@@ -103,12 +105,14 @@ export const extend = async (req: any, res: express.Response) => {
 export const getUser = async (req: any, res: express.Response) => {
   try {
     // 因為 jwt 驗證已經在 req.body 傳入 user
-    const { hashedPassword, ...returnInfo } = req.user
+    const deepcopyUser = _.cloneDeep(req.user).toObject()
+    delete deepcopyUser.hashedPassword
+    delete deepcopyUser.tokens
 
     res.status(200).send({
       success: true,
       message: '',
-      result: { ...returnInfo }
+      result: deepcopyUser
     })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

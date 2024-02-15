@@ -6,6 +6,7 @@ import cors from 'cors'
 
 import './passport/passport'
 import usersRouter from './routes/users'
+import productsRouter from './routes/products'
 
 mongoose
   // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
@@ -20,7 +21,7 @@ app.use(
   cors({
     origin(origin, callback) {
       // callback(錯誤訊息, 是否通過)
-      console.log(origin)
+      // console.log(origin)
       if (
         origin === undefined ||
         origin.includes('github') ||
@@ -45,6 +46,7 @@ app.use((_: any, req: any, res: any, next: any) => {
 })
 
 app.use('/users', usersRouter)
+app.use('/products', productsRouter)
 
 app.all('*', (req: express.Request, res: express.Response) => {
   res.status(404).send({ success: false, message: '找不到' })
