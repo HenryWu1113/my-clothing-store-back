@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import users from '../models/users'
+import admins from '../models/admins'
 import bcrypt from 'bcrypt'
 import express from 'express'
 import jwt from 'jsonwebtoken'
@@ -30,7 +30,7 @@ export const register = async (req: express.Request, res: express.Response) => {
   }
   req.body.hashedPassword = bcrypt.hashSync(password, 10)
   try {
-    await users.create(req.body)
+    await admins.create(req.body)
     res.status(200).send({ success: true, message: '註冊成功' })
   } catch (error: any) {
     if (error.name === 'ValidationError') {
@@ -48,14 +48,14 @@ export const register = async (req: express.Request, res: express.Response) => {
 export const login = async (req: any, res: express.Response) => {
   try {
     const token = jwt.sign(
-      { _id: req.user._id },
+      { _id: req.admin._id },
       process.env.SECRET as string,
       {
-        expiresIn: '7 days'
+        expiresIn: '1 days'
       }
     )
-    req.user.tokens.push(token)
-    await req.user.save()
+    req.admin.tokens.push(token)
+    await req.admin.save()
     res.status(200).send({
       success: true,
       message: '登入成功',
@@ -64,16 +64,17 @@ export const login = async (req: any, res: express.Response) => {
       }
     })
   } catch (error) {
+    console.log(error)
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
 
 export const logout = async (req: any, res: express.Response) => {
   try {
-    req.user.tokens = req.user.tokens.filter(
+    req.admin.tokens = req.admin.tokens.filter(
       (token: string) => token !== req.token
     )
-    await req.user.save()
+    await req.admin.save()
     res
       .status(200)
       .send({ success: true, message: '前端自己把 token 移除吧，我根本沒做事' })
@@ -84,28 +85,28 @@ export const logout = async (req: any, res: express.Response) => {
 
 export const extend = async (req: any, res: express.Response) => {
   try {
-    const idx = req.user.tokens.findIndex(
+    const idx = req.admin.tokens.findIndex(
       (token: string) => token === req.token
     )
     const token = jwt.sign(
-      { _id: req.user._id },
+      { _id: req.admin._id },
       process.env.SECRET as string,
       {
-        expiresIn: '7 days'
+        expiresIn: '1 days'
       }
     )
-    req.user.tokens[idx] = token
-    await req.user.save()
+    req.admin.tokens[idx] = token
+    await req.admin.save()
     res.status(200).send({ success: true, message: '', result: token })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
 
-export const getUser = async (req: any, res: express.Response) => {
+export const getAdmin = async (req: any, res: express.Response) => {
   try {
-    // 因為 jwt 驗證已經在 req.body 傳入 user
-    const deepcopyUser = _.cloneDeep(req.user).toObject()
+    // 因為 jwt 驗證已經在 req.body 傳入 admin
+    const deepcopyUser = _.cloneDeep(req.admin).toObject()
     delete deepcopyUser.hashedPassword
     delete deepcopyUser.tokens
 

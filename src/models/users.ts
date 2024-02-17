@@ -6,7 +6,7 @@ const schema = new mongoose.Schema(
   {
     email: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
       validator: {
         validator(email: string) {
@@ -17,7 +17,7 @@ const schema = new mongoose.Schema(
     },
     hashedPassword: {
       type: String,
-      require: true
+      required: true
     },
     address: {
       type: String
@@ -36,7 +36,7 @@ const schema = new mongoose.Schema(
     },
     disabled: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false
     },
     name: {

@@ -14,11 +14,11 @@ const schema = new mongoose.Schema(
     },
     hashedPassword: {
       type: String,
-      require: true
+      required: true
     },
     email: {
       type: String,
-      require: true,
+      required: [true, '缺少信箱欄位'],
       unique: true,
       validator: {
         validator(email: string) {
@@ -44,20 +44,21 @@ const schema = new mongoose.Schema(
     },
     role: {
       type: String,
-      require: true,
+      required: true,
       enum: {
-        values: ['manager', 'clerk']
+        values: ['manager', 'clerk'],
+        message: '權限設定錯誤'
       }
     },
     disabled: {
       type: Boolean,
-      require: true,
+      required: true,
       default: false
     },
     store: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'stores',
-      require: true
+      required: true
     },
     name: {
       type: String
@@ -68,7 +69,7 @@ const schema = new mongoose.Schema(
         values: ['male', 'female'],
         message: '性別錯誤'
       },
-      require: true
+      required: true
     },
     birthday: {
       type: String

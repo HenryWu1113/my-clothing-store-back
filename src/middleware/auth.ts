@@ -16,46 +16,74 @@ import express from 'express'
 4. 判斷 done 回傳結果決定回傳失敗訊息或是進入下一個 middleware
 */
 
-export const login = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
-  passport.authenticate(
-    'login',
-    { session: false },
-    // 從 passport.ts done 傳果來的參數
-    (err: any, user: any, info: any) => {
-      if (err || !user) {
-        if (info.message === 'Missing credentials') info.message = '驗證錯誤'
-        return res.status(401).send({ success: false, message: info.message })
-      }
-      req.user = user
-      next()
-    }
-  )(req, res, next)
+/** 使用的登入策略(根據使用者或是管理者，要做不太一樣的回傳值) */
+const LoginStrategy = {
+  user: 'login',
+  admin: 'adminLogin'
 }
 
-export const jwt = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
-) => {
-  passport.authenticate(
-    'jwt',
-    { session: false },
-    (err: any, data: any, info: any) => {
-      if (err || !data) {
-        if (info instanceof jsonwebtoken.JsonWebTokenError) {
-          return res.status(401).send({ success: false, message: '驗證錯誤' })
-        } else {
+/** 使用的 jwt 策略(根據使用者或是管理者，要做不太一樣的回傳值) */
+const JWTStrategy = {
+  user: 'jwt',
+  admin: 'adminJwt'
+}
+
+export const login = (type: 'user' | 'admin') => {
+  return (req: any, res: express.Response, next: express.NextFunction) => {
+    passport.authenticate(
+      LoginStrategy[type],
+      { session: false },
+      // 從 passport.ts done 傳果來的參數
+      (err: any, userOrAdmin: any, info: any) => {
+        if (err || !userOrAdmin) {
+          if (info.message === 'Missing credentials') info.message = '驗證錯誤'
           return res.status(401).send({ success: false, message: info.message })
         }
+
+        if (info.message === '一般使用者登入') {
+          req.user = userOrAdmin
+        } else if (info.message === '管理者登入') {
+          req.admin = userOrAdmin
+        } else {
+          return res
+            .status(401)
+            .send({ success: false, message: '錯誤驗證方法' })
+        }
+        next()
       }
-      req.user = data.user
-      // @ts-ignore
-      req.token = data.token
-      next()
-    }
-  )(req, res, next)
+    )(req, res, next)
+  }
+}
+
+export const jwt = (type: 'user' | 'admin') => {
+  return (req: any, res: express.Response, next: express.NextFunction) => {
+    passport.authenticate(
+      JWTStrategy[type],
+      { session: false },
+      (err: any, data: any, info: any) => {
+        if (err || !data) {
+          if (info instanceof jsonwebtoken.JsonWebTokenError) {
+            return res.status(401).send({ success: false, message: '驗證錯誤' })
+          } else {
+            return res
+              .status(401)
+              .send({ success: false, message: info.message })
+          }
+        }
+
+        if (info.message === '使用者JWT') {
+          req.user = data.user
+        } else if (info.message === '管理者JWT') {
+          req.admin = data.admin
+        } else {
+          return res
+            .status(401)
+            .send({ success: false, message: '錯誤驗證方法' })
+        }
+        // @ts-ignore
+        req.token = data.token
+        next()
+      }
+    )(req, res, next)
+  }
 }

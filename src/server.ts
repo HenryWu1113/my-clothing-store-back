@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/space-before-function-paren */
 import 'dotenv/config'
 import express from 'express'
@@ -6,6 +7,7 @@ import cors from 'cors'
 
 import './passport/passport'
 import usersRouter from './routes/users'
+import adminsRouter from './routes/admins'
 import productsRouter from './routes/products'
 
 mongoose
@@ -46,6 +48,7 @@ app.use((_: any, req: any, res: any, next: any) => {
 })
 
 app.use('/users', usersRouter)
+app.use('/admins', adminsRouter)
 app.use('/products', productsRouter)
 
 app.all('*', (req: express.Request, res: express.Response) => {
