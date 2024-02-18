@@ -32,26 +32,26 @@ const schema = new mongoose.Schema(
     },
     deliveryMethod: {
       type: String,
-      require: [true, '缺少取貨方式']
+      required: [true, '缺少取貨方式']
     },
     recipientName: {
       type: String,
-      require: [true, '缺少取貨人姓名']
+      required: [true, '缺少取貨人姓名']
     },
     recipientPhone: {
       type: String,
-      require: [true, '缺少取貨人電話']
+      required: [true, '缺少取貨人電話']
     },
     recipientAddress: {
       type: String,
-      require: [true, '缺少取貨地址']
+      required: [true, '缺少取貨地址']
     },
     recipientEmail: {
       type: String
     },
     orderStatus: {
       type: String,
-      require: true,
+      required: true,
       enum: {
         values: ['處理中', '已確認', '已完成', '已取消']
       },
@@ -59,7 +59,7 @@ const schema = new mongoose.Schema(
     },
     payStatus: {
       type: String,
-      require: true,
+      required: true,
       enum: {
         values: ['未付款', '已退款', '已付款']
       },
@@ -67,7 +67,7 @@ const schema = new mongoose.Schema(
     },
     sendStatus: {
       type: String,
-      require: true,
+      required: true,
       enum: {
         values: ['備貨中', '發貨中', '已到達', '已取貨', '退貨中', '已退貨']
       },
@@ -75,7 +75,7 @@ const schema = new mongoose.Schema(
     },
     totalAmount: {
       type: Number,
-      require: [true, '缺少總金額']
+      required: [true, '缺少總金額']
     }
   },
   { timestamps: true, versionKey: false }

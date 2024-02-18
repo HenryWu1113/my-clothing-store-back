@@ -4,12 +4,12 @@ const schema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      required: true,
       unique: true
     },
     price: {
       type: Number,
-      require: true
+      required: true
     },
     stockQuantity: {
       type: Number,
@@ -17,9 +17,9 @@ const schema = new mongoose.Schema(
     },
     description: {
       type: String,
-      require: true
+      required: true
     },
-    image: {
+    images: {
       type: [String]
     },
     soldQuantity: {
@@ -30,15 +30,16 @@ const schema = new mongoose.Schema(
       type: Number,
       default: 0.0
     },
-    gender: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'categories',
+    clothingGender: {
+      type: String,
       required: true
     },
-    clothing: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'categories',
+    clothingPart: {
+      type: String,
       required: true
+    },
+    tags: {
+      type: [String]
     },
     colors: {
       type: [String],
