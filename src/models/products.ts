@@ -36,7 +36,7 @@ const schema = new mongoose.Schema(
     },
     clothingPart: {
       type: String,
-      required: true
+      required: [true, '缺少衣服分類']
     },
     tags: {
       type: [String]
@@ -49,7 +49,7 @@ const schema = new mongoose.Schema(
       type: [String],
       required: true
     },
-    rating: {
+    ratings: {
       type: [
         {
           type: mongoose.Schema.Types.ObjectId,

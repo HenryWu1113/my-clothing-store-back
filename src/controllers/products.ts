@@ -14,13 +14,14 @@ export const createProduct = async (req: any, res: express.Response) => {
       stockQuantity: req.body.stockQuantity,
       soldQuantity: req.body.soldQuantity,
       discountRate: req.body.discountRate,
-      gender: req.body.gender,
-      clothing: req.body.clothing,
+      clothingGender: req.body.clothingGender,
+      clothingPart: req.body.clothingPart,
+      tags: req.body.tags ?? [],
       colors: req.body.colors ?? [],
       sizes: req.body.sizes ?? [],
-      rating: req.body.rating ?? [],
+      ratings: req.body.ratings ?? [],
       sell: req.body.sell,
-      image:
+      images:
         req.files?.map((file: any) => {
           return file.path
         }) || []
@@ -82,16 +83,17 @@ export const editProduct = async (req: any, res: express.Response) => {
       stockQuantity: req.body.stockQuantity,
       soldQuantity: req.body.soldQuantity,
       discountRate: req.body.discountRate,
-      gender: req.body.gender,
-      clothing: req.body.clothing,
+      clothingGender: req.body.clothingGender,
+      clothingPart: req.body.clothingPart,
+      tags: req.body.tags ?? [],
       colors: req.body.colors ?? [],
       sizes: req.body.sizes ?? [],
-      rating: req.body.rating ?? [],
+      ratings: req.body.ratings ?? [],
       sell: req.body.sell
     }
 
     if (req?.files?.length > 0) {
-      data.image = req.files?.map((file: any) => {
+      data.images = req.files?.map((file: any) => {
         return file.path
       })
     }

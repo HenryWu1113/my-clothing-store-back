@@ -5,7 +5,7 @@ import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
 import admin from '../middleware/admin'
-import { singleUpload, mutiUpload } from '../middleware/upload'
+import { uploadImage } from '../middleware/upload'
 import {
   createProduct,
   getProducts,
@@ -19,20 +19,20 @@ const router = express.Router()
 router.post(
   '/',
   content('multipart/form-data'),
-  auth.jwt,
+  auth.jwt('admin'),
   admin,
-  mutiUpload,
+  uploadImage('mutiple', 'images'),
   createProduct
 )
 router.get('/', getProducts)
-router.get('/all', auth.jwt, admin, getAllProducts)
+router.get('/all', auth.jwt('admin'), admin, getAllProducts)
 router.get('/:id', getProduct)
 router.patch(
   '/:id',
   content('multipart/form-data'),
-  auth.jwt,
+  auth.jwt('admin'),
   admin,
-  mutiUpload,
+  uploadImage('mutiple', 'images'),
   editProduct
 )
 
