@@ -43,7 +43,23 @@ export const getProducts = async (
   res: express.Response
 ) => {
   try {
-    const result = await products.find({ sell: true })
+    // 只找上架中
+    const query: Record<string, any> = {
+      sell: true
+    }
+
+    // 取 query string
+    /** 分類(男裝、女裝) */
+    const clothingGender = req.query.clothingGender
+
+    // 有此值就加入 query 條件
+    if (clothingGender) {
+      query.clothingGender = clothingGender
+    }
+
+    const result = await products.find(query)
+
+    console.log(result)
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

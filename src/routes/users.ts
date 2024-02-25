@@ -4,7 +4,17 @@
 import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
-import { register, login, logout, extend, getUser } from '../controllers/users'
+import {
+  register,
+  login,
+  logout,
+  extend,
+  getUser,
+  editUser,
+  addCart,
+  editCart,
+  getCart
+} from '../controllers/users'
 
 const router = express.Router()
 
@@ -16,5 +26,9 @@ router.post('/login', content('application/json'), auth.login(mode), login)
 router.delete('/logout', auth.jwt(mode), logout)
 router.post('/extend', auth.jwt(mode), extend)
 router.get('/', auth.jwt(mode), getUser)
+router.patch('/', content('application/json'), auth.jwt(mode), editUser)
+router.post('/cart', content('application/json'), auth.jwt(mode), addCart)
+router.patch('/cart', content('application/json'), auth.jwt(mode), editCart)
+router.get('/cart', auth.jwt(mode), getCart)
 
 export default router

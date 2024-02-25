@@ -5,10 +5,12 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import users from '../models/users'
+import products from '../models/products'
 import bcrypt from 'bcrypt'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
+import validator from 'validator'
 
 export const register = async (req: express.Request, res: express.Response) => {
   const password: string = req.body.password
@@ -114,6 +116,169 @@ export const getUser = async (req: any, res: express.Response) => {
       message: '',
       result: deepcopyUser
     })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const editUser = async (req: any, res: express.Response) => {
+  try {
+    const data = {
+      email: req.body.email,
+      address: req.body.address,
+      cellphone: req.body.cellphone,
+      name: req.body.name,
+      sex: req.body.sex,
+      birthday: req.body.birthday,
+      avatar: req.body.avatar,
+      backgroundImg: req.body.backgroundImg
+    }
+
+    if (data.email !== undefined && !validator.isEmail(data.email)) {
+      return res.status(400).send({ success: false, message: '信箱格式錯誤' })
+    }
+    if (
+      data.cellphone !== undefined &&
+      !validator.isMobilePhone(String(data.cellphone), 'zh-TW')
+    ) {
+      return res.status(400).send({ success: false, message: '不合法手機號碼' })
+    }
+    if (data.sex !== undefined && !['male', 'female'].includes(data.sex)) {
+      return res.status(400).send({ success: false, message: '性別錯誤' })
+    }
+
+    await users.findOneAndUpdate(
+      { _id: req.user._id },
+      {
+        $set: data
+      }
+    )
+
+    res.status(200).send({ success: true, message: '' })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const addCart = async (req: any, res: express.Response) => {
+  try {
+    // req.body.product是商品 _id
+    const result = await products.findById(req.body.product)
+    if (!result || !result.sell) {
+      return res.status(404).send({ success: false, message: '商品不存在' })
+    }
+
+    console.log(req.body.product)
+    console.log(req.body.color)
+    console.log(req.body.size)
+
+    console.log(req.user.cart)
+
+    const idx = req.user.cart.findIndex(
+      (item: {
+        product: string
+        quantity: number
+        color: string
+        size: string
+      }) =>
+        item.product.toString() === req.body.product &&
+        item.color === req.body.color &&
+        item.size === req.body.size
+    )
+
+    console.log(idx)
+
+    if (idx === -1) {
+      req.user.cart.push({
+        product: req.body.product,
+        quantity: req.body.quantity,
+        color: req.body.color,
+        size: req.body.size
+      })
+    } else {
+      req.user.cart[idx].quantity += req.body.quantity
+    }
+
+    await req.user.save()
+    res
+      .status(200)
+      .send({ success: true, message: '', result: req.user.cart.length })
+  } catch (error: any) {
+    if (error.name === 'ValidationError') {
+      const key = Object.keys(error.errors)[0]
+      const message = error.errors[key].message
+      return res.status(400).send({ success: false, message })
+    } else {
+      res.status(500).send({ success: false, message: '伺服器錯誤' })
+    }
+  }
+}
+
+export const editCart = async (req: any, res: express.Response) => {
+  // 試一下 mongoose 語法
+  try {
+    let user: any = 0
+
+    if (req.body.quantity <= 0) {
+      user = await users.findOneAndUpdate(
+        {
+          _id: req.user.id,
+          'cart.product': req.body.product,
+          'cart.color': req.body.color,
+          'cart.size': req.body.size
+        },
+        {
+          $pull: {
+            cart: {
+              product: req.body.product,
+              color: req.body.color,
+              size: req.body.size
+            }
+          }
+        },
+        { new: true }
+      )
+    } else {
+      user = await users.findOneAndUpdate(
+        {
+          _id: req.user.id,
+          'cart.product': req.body.product,
+          'cart.color': req.body.color,
+          'cart.size': req.body.size
+        },
+        {
+          $set: {
+            'cart.$.quantity': req.body.quantity
+          }
+        },
+        { new: true }
+      )
+    }
+
+    res
+      .status(200)
+      .send({ success: true, message: '', result: user.cart.length ?? 0 })
+  } catch (error: any) {
+    if (error.name === 'ValidationError') {
+      const key = Object.keys(error.errors)[0]
+      const message = error.errors[key].message
+      return res.status(400).send({ success: false, message })
+    } else {
+      res.status(500).send({ success: false, message: '伺服器錯誤' })
+    }
+  }
+}
+
+export const getCart = async (req: any, res: express.Response) => {
+  try {
+    const result = await users
+      .findById(req.user._id, 'cart')
+      .populate('cart.product')
+
+    if (!result) {
+      return res.status(404).send({ success: false, message: '找不到使用者' })
+    }
+    res.status(200).send({ success: true, message: '', result: result.cart })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
