@@ -283,3 +283,57 @@ export const getCart = async (req: any, res: express.Response) => {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
+
+export const updateFav = async (req: any, res: express.Response) => {
+  try {
+    const result = await products.findById(req.body.product)
+    if (!result || !result.sell) {
+      return res.status(404).send({ success: false, message: '商品不存在' })
+    }
+
+    const idx = req.user.favorites.findIndex(
+      (item: any) => item.toString() === req.body.product
+    )
+    let str: string = ''
+    if (idx === -1) {
+      str = '加入'
+      req.user.favorites.push(req.body.product)
+    } else {
+      str = '移除'
+      req.user.favorites = req.user.favorites.filter(
+        (item: any) => item.toString() !== req.body.product
+      )
+    }
+
+    // req.user.favorites.push(req.body.product)
+    await req.user.save()
+    res.status(200).send({
+      success: true,
+      message: `${str}收藏成功`,
+      result: req.user.favorites
+    })
+  } catch (error: any) {
+    console.log(error)
+    if (error.name === 'ValidationError') {
+      const key = Object.keys(error.errors)[0]
+      const message = error.errors[key].message
+      return res.status(400).send({ success: false, message })
+    } else {
+      res.status(500).send({ success: false, message: '伺服器錯誤' })
+    }
+  }
+}
+
+export const getFavs = async (req: any, res: express.Response) => {
+  try {
+    const result: any = await users
+      .findById(req.user._id, 'favorites')
+      .populate('favorites')
+    console.log(result)
+    res
+      .status(200)
+      .send({ success: true, message: '', result: result.favorites })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
