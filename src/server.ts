@@ -9,6 +9,7 @@ import './passport/passport'
 import usersRouter from './routes/users'
 import adminsRouter from './routes/admins'
 import productsRouter from './routes/products'
+import categoriesRouter from './routes/categories'
 
 mongoose
   // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
@@ -50,6 +51,7 @@ app.use((_: any, req: any, res: any, next: any) => {
 app.use('/users', usersRouter)
 app.use('/admins', adminsRouter)
 app.use('/products', productsRouter)
+app.use('/categories', categoriesRouter)
 
 app.all('*', (req: express.Request, res: express.Response) => {
   res.status(404).send({ success: false, message: '找不到' })

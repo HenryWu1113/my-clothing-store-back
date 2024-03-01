@@ -16,21 +16,24 @@ import {
 
 const router = express.Router()
 
+/** 使用者模式 */
+const mode = 'user'
+
 router.post(
   '/',
   content('multipart/form-data'),
-  auth.jwt('admin'),
+  auth.jwt(mode),
   admin,
   uploadImage('mutiple', 'images'),
   createProduct
 )
 router.get('/', getProducts)
-router.get('/all', auth.jwt('admin'), admin, getAllProducts)
+router.get('/all', auth.jwt(mode), admin, getAllProducts)
 router.get('/:id', getProduct)
 router.patch(
   '/:id',
   content('multipart/form-data'),
-  auth.jwt('admin'),
+  auth.jwt(mode),
   admin,
   uploadImage('mutiple', 'images'),
   editProduct
