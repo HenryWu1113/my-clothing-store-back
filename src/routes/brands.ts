@@ -5,11 +5,7 @@ import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
 import admin from '../middleware/admin'
-import {
-  createCategory,
-  editCategory,
-  deleteCategory
-} from '../controllers/categories'
+import { createBrand, editBrand } from '../controllers/brands'
 
 const router = express.Router()
 
@@ -21,15 +17,14 @@ router.post(
   content('application/json'),
   auth.jwt(mode),
   admin,
-  createCategory
+  createBrand
 )
 router.patch(
   '/:id',
   content('application/json'),
   auth.jwt(mode),
   admin,
-  editCategory
+  editBrand
 )
-router.delete('/:id', auth.jwt(mode), admin, deleteCategory)
 
 export default router

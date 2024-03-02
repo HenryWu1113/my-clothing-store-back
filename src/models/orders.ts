@@ -26,6 +26,10 @@ const schema = new mongoose.Schema(
           size: {
             type: String,
             required: [true, '缺少數量欄位']
+          },
+          price: {
+            type: Number,
+            required: [true, '沒有當前價格']
           }
         }
       ]

@@ -6,6 +6,8 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 import './passport/passport'
+import brandsRouter from './routes/brands'
+import storesRouter from './routes/stores'
 import usersRouter from './routes/users'
 import adminsRouter from './routes/admins'
 import productsRouter from './routes/products'
@@ -48,6 +50,8 @@ app.use((_: any, req: any, res: any, next: any) => {
   res.status(400).send({ success: false, message: '請求格式錯誤' })
 })
 
+app.use('/brands', brandsRouter)
+app.use('/stores', storesRouter)
 app.use('/users', usersRouter)
 app.use('/admins', adminsRouter)
 app.use('/products', productsRouter)

@@ -3,23 +3,19 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import express from 'express'
-import categories from '../models/categories'
+import stores from '../models/stores'
 
-export const createCategory = async (
+export const createStore = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
     console.log(req.body)
-    const result = await categories.create(req.body)
+    const result = await stores.create(req.body)
     res.status(200).send({ success: true, message: '', result })
   } catch (error: any) {
     console.log(error)
-    if (error.code === 11000) {
-      return res
-        .status(400)
-        .send({ success: false, message: '重複的 categoryType & key' })
-    } else if (error.name === 'ValidationError') {
+    if (error.name === 'ValidationError') {
       const key = Object.keys(error.errors)[0]
       const message = error.errors[key].message
       return res.status(400).send({ success: false, message })
@@ -29,12 +25,12 @@ export const createCategory = async (
   }
 }
 
-export const editCategory = async (
+export const editStore = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const result = await categories.findByIdAndUpdate(
+    const result = await stores.findByIdAndUpdate(
       req.params.id,
       {
         $set: req.body
@@ -48,12 +44,12 @@ export const editCategory = async (
   }
 }
 
-export const deleteCategory = async (
+export const deleteStore = async (
   req: express.Request,
   res: express.Response
 ) => {
   try {
-    const result = await categories.findByIdAndDelete(req.params.id)
+    const result = await stores.findByIdAndDelete(req.params.id)
     res.status(200).send({ success: true, message: '刪除成功', result })
   } catch (error: any) {
     console.log(error)
