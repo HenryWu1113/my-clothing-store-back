@@ -31,7 +31,14 @@ const schema = new mongoose.Schema(
       required: true
     },
     sellSeries: {
-      type: [String]
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'categories',
+          required: true,
+          message: '缺少類別欄位'
+        }
+      ]
     }
   },
   { timestamps: true, versionKey: false }

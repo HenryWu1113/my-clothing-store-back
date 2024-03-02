@@ -5,12 +5,20 @@ import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
 import admin from '../middleware/admin'
-import { createBrand, editBrand } from '../controllers/brands'
+import {
+  createBrand,
+  getBrand,
+  getBrands,
+  editBrand
+} from '../controllers/brands'
 
 const router = express.Router()
 
 /** 使用者模式 */
 const mode = 'admin'
+
+router.get('/:id', auth.jwt(mode), admin, getBrand)
+router.get('/', auth.jwt(mode), admin, getBrands)
 
 router.post(
   '/',

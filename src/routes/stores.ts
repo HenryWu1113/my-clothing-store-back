@@ -5,12 +5,21 @@ import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
 import admin from '../middleware/admin'
-import { createStore, editStore, deleteStore } from '../controllers/stores'
+import {
+  createStore,
+  getStore,
+  getStores,
+  editStore,
+  deleteStore
+} from '../controllers/stores'
 
 const router = express.Router()
 
 /** 使用者模式 */
 const mode = 'admin'
+
+router.get('/:id', getStore)
+router.get('/', getStores)
 
 router.post(
   '/',

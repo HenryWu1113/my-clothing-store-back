@@ -29,6 +29,36 @@ export const createCategory = async (
   }
 }
 
+export const getCategory = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const result = await categories.findById(req.params.id)
+    if (!result) {
+      return res.status(404).send({ success: false, message: '找不到分類' })
+    }
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const getCategories = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const result = await categories.find()
+    if (!result) {
+      return res.status(404).send({ success: false, message: '沒有任何分類' })
+    }
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
 export const editCategory = async (
   req: express.Request,
   res: express.Response

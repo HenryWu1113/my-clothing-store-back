@@ -7,6 +7,8 @@ import content from '../middleware/content'
 import admin from '../middleware/admin'
 import {
   createCategory,
+  getCategory,
+  getCategories,
   editCategory,
   deleteCategory
 } from '../controllers/categories'
@@ -15,6 +17,9 @@ const router = express.Router()
 
 /** 使用者模式 */
 const mode = 'admin'
+
+router.get('/:id', auth.jwt(mode), admin, getCategory)
+router.get('/', auth.jwt(mode), admin, getCategories)
 
 router.post(
   '/',

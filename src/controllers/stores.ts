@@ -25,6 +25,33 @@ export const createStore = async (
   }
 }
 
+export const getStore = async (req: express.Request, res: express.Response) => {
+  try {
+    const result = await stores.findById(req.params.id).populate('sellSeries')
+    if (!result) {
+      return res.status(404).send({ success: false, message: '找不到店鋪' })
+    }
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const getStores = async (
+  req: express.Request,
+  res: express.Response
+) => {
+  try {
+    const result = await stores.find().populate('sellSeries')
+    if (!result) {
+      return res.status(404).send({ success: false, message: '沒有任何店鋪' })
+    }
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
 export const editStore = async (
   req: express.Request,
   res: express.Response
