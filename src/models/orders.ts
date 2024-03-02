@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/space-before-function-paren */
 import mongoose from 'mongoose'
+import validator from 'validator'
 
 const schema = new mongoose.Schema(
   {
@@ -44,6 +46,12 @@ const schema = new mongoose.Schema(
     },
     recipientPhone: {
       type: String,
+      validator: {
+        validator(phoneNumber: string) {
+          return validator.isMobilePhone(phoneNumber, 'zh-TW')
+        },
+        message: '不合法手機號碼'
+      },
       required: [true, '缺少取貨人電話']
     },
     recipientAddress: {
@@ -51,7 +59,13 @@ const schema = new mongoose.Schema(
       required: [true, '缺少取貨地址']
     },
     recipientEmail: {
-      type: String
+      type: String,
+      validator: {
+        validator(email: string) {
+          return validator.isEmail(email)
+        },
+        message: '信箱格式錯誤'
+      }
     },
     orderStatus: {
       type: String,

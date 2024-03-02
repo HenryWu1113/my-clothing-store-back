@@ -7,12 +7,12 @@ import content from '../middleware/content'
 import admin from '../middleware/admin'
 import { uploadImage } from '../middleware/upload'
 import {
-  createProduct,
-  getProducts,
-  getAllProducts,
-  getProduct,
-  editProduct
-} from '../controllers/products'
+  createNews,
+  getNews,
+  getAllNews,
+  getSingleNews,
+  editSingleNews
+} from '../controllers/news'
 
 const router = express.Router()
 
@@ -24,19 +24,19 @@ router.post(
   content('multipart/form-data'),
   auth.jwt(mode),
   admin,
-  uploadImage('mutiple', 'images'),
-  createProduct
+  uploadImage('single', 'image'),
+  createNews
 )
-router.get('/', getProducts)
-router.get('/all', auth.jwt(mode), admin, getAllProducts)
-router.get('/:id', getProduct)
+router.get('/', getNews)
+router.get('/all', auth.jwt(mode), admin, getAllNews)
+router.get('/:id', getSingleNews)
 router.patch(
   '/:id',
   content('multipart/form-data'),
   auth.jwt(mode),
   admin,
-  uploadImage('mutiple', 'images'),
-  editProduct
+  uploadImage('single', 'image'),
+  editSingleNews
 )
 
 export default router
