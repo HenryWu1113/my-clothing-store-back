@@ -4,48 +4,45 @@
 import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
-import admin from '../middleware/admin'
 import { uploadImage } from '../middleware/upload'
 import {
-  createOutfit,
-  getOutfits,
-  getAllOutfits,
-  getClerkOutfits,
-  getOutfit,
-  editOutfit,
-  deleteOutfit
-} from '../controllers/outfits'
+  createRating,
+  getProductAllRatings,
+  getUserAllRatings,
+  editRating,
+  thumbUpRating,
+  deleteRating
+} from '../controllers/ratings'
 
 const router = express.Router()
 
 /** 使用者模式 */
-const mode = 'admin'
+const mode = 'user'
 
-// 創建穿搭
+// 創建評分
 router.post(
   '/',
   content('multipart/form-data'),
   auth.jwt(mode),
   uploadImage('mutiple', 'images'),
-  createOutfit
+  createRating
 )
-// 取得穿搭(有上架的)
-router.get('/', getOutfits)
-// 取得該店員所有穿搭(店員所有自己新增的)
-router.get('/clerk/:id', getClerkOutfits)
-// 取得所有穿搭(管理者)
-router.get('/all', auth.jwt(mode), admin, getAllOutfits)
-// 取得單筆穿搭
-router.get('/:id', getOutfit)
-// 更新穿搭
+
+// 取得該商品所有評分
+router.get('/product/:productId', getProductAllRatings)
+// 取得該使用者所有評分
+router.get('/user/:userId', getUserAllRatings)
+// 更新評分(id 是該評分的 _id)
 router.patch(
-  '/:id',
+  '/edit/:id',
   content('multipart/form-data'),
   auth.jwt(mode),
   uploadImage('mutiple', 'images'),
-  editOutfit
+  editRating
 )
-// 刪除穿搭
-router.delete('/:id', auth.jwt(mode), deleteOutfit)
+// 點讚評分(id 是該評分的 _id)
+router.patch('/thumb/:id', auth.jwt(mode), thumbUpRating)
+// 刪除評分
+router.delete('/:id', auth.jwt(mode), deleteRating)
 
 export default router

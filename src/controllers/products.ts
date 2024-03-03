@@ -57,7 +57,7 @@ export const getProducts = async (
       query.clothingGender = clothingGender
     }
 
-    const result = await products.find(query)
+    const result = await products.find(query).populate('ratings', 'score')
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
@@ -71,7 +71,7 @@ export const getAllProducts = async (
   res: express.Response
 ) => {
   try {
-    const result = await products.find()
+    const result = await products.find().populate('ratings', 'score')
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -83,7 +83,9 @@ export const getProduct = async (
   res: express.Response
 ) => {
   try {
-    const result = await products.findById(req.params.id)
+    const result = await products
+      .findById(req.params.id)
+      .populate('ratings', 'score')
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -114,9 +116,11 @@ export const editProduct = async (req: any, res: express.Response) => {
       })
     }
 
-    const result = await products.findByIdAndUpdate(req.params.id, data, {
-      new: true
-    })
+    const result = await products
+      .findByIdAndUpdate(req.params.id, data, {
+        new: true
+      })
+      .populate('ratings', 'score')
     res.status(200).send({ success: true, message: '', result })
   } catch (error: any) {
     if (error.name === 'ValidationError') {
