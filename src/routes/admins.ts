@@ -4,12 +4,17 @@
 import express from 'express'
 import * as auth from '../middleware/auth'
 import content from '../middleware/content'
+import admin from '../middleware/admin'
+import { uploadImage } from '../middleware/upload'
+
 import {
   register,
   login,
   logout,
   extend,
-  getAdmin
+  getAdmin,
+  editAdmin,
+  editAdminImage
 } from '../controllers/admins'
 
 const router = express.Router()
@@ -23,4 +28,33 @@ router.delete('/logout', auth.jwt(mode), logout)
 router.post('/extend', auth.jwt(mode), extend)
 router.get('/', auth.jwt(mode), getAdmin)
 
+// 取得所有員工(管理者專用)
+// router.get('/all', auth.jwt('admin'),admin, getAllAdmins)
+// 管理者編輯其他員工
+// router.patch(
+//   '/admin/:adminId',
+//   content('application/json'),
+//   auth.jwt(mode),
+//   admin,
+//   editAllAdmins
+// )
+
+// 文本系列更新
+router.patch('/', content('application/json'), auth.jwt(mode), editAdmin)
+// avatar 更新
+router.patch(
+  '/avatar',
+  content('multipart/form-data'),
+  auth.jwt(mode),
+  uploadImage('single', 'avatar'),
+  editAdminImage('avatar')
+)
+// backgroundImg 更新
+router.patch(
+  '/backgroundImg',
+  content('multipart/form-data'),
+  auth.jwt(mode),
+  uploadImage('single', 'backgroundImg'),
+  editAdminImage('backgroundImg')
+)
 export default router

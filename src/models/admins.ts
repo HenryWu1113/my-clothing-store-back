@@ -66,7 +66,7 @@ const schema = new mongoose.Schema(
     sex: {
       type: String,
       enum: {
-        values: ['male', 'female'],
+        values: ['男', '女'],
         message: '性別錯誤'
       },
       required: true
@@ -85,14 +85,6 @@ const schema = new mongoose.Schema(
     },
     backgroundImg: {
       type: String
-    },
-    theme: {
-      type: String,
-      enum: {
-        values: ['theme', 'light', 'dark'],
-        message: '主題色錯誤'
-      },
-      default: 'theme'
     }
   },
   { timestamps: true, versionKey: false }

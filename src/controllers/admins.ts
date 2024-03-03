@@ -9,6 +9,7 @@ import bcrypt from 'bcrypt'
 import express from 'express'
 import jwt from 'jsonwebtoken'
 import _ from 'lodash'
+import validator from 'validator'
 
 export const register = async (req: express.Request, res: express.Response) => {
   const password: string = req.body.password
@@ -117,5 +118,75 @@ export const getAdmin = async (req: any, res: express.Response) => {
     })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const editAdmin = async (req: any, res: express.Response) => {
+  try {
+    const data = {
+      email: req.body.email,
+      address: req.body.address,
+      cellphone: req.body.cellphone,
+      name: req.body.name,
+      sex: req.body.sex,
+      birthday: req.body.birthday,
+      height: req.body.height,
+      weight: req.body.weight
+    }
+
+    if (data.email !== undefined && !validator.isEmail(data.email)) {
+      return res.status(400).send({ success: false, message: '信箱格式錯誤' })
+    }
+    if (
+      data.cellphone !== undefined &&
+      !validator.isMobilePhone(String(data.cellphone), 'zh-TW')
+    ) {
+      return res.status(400).send({ success: false, message: '不合法手機號碼' })
+    }
+    if (data.sex !== undefined && !['男', '女'].includes(data.sex)) {
+      return res.status(400).send({ success: false, message: '性別錯誤' })
+    }
+
+    const result = await admins
+      .findOneAndUpdate(
+        { _id: req.admin._id },
+        {
+          $set: data
+        },
+        {
+          new: true
+        }
+      )
+      .select('-tokens -hashedPassword')
+
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const editAdminImage = (imgType: 'avatar' | 'backgroundImg') => {
+  return async (req: any, res: express.Response) => {
+    const Image = {
+      avatar: '大頭貼',
+      backgroundImg: '個人背景圖'
+    }
+    try {
+      if (req.file) {
+        const update: any = { $set: {} }
+        update.$set[imgType] = req.file.path
+        const result = await admins
+          .findByIdAndUpdate(req.admin._id, update, {
+            new: true
+          })
+          .select('-tokens -hashedPassword')
+        return res
+          .status(200)
+          .send({ success: true, message: `更新${Image[imgType]}成功`, result })
+      }
+      res.status(200).send({ success: true, message: '沒有更新任何圖片' })
+    } catch (error) {
+      res.status(500).send({ success: false, message: '伺服器錯誤' })
+    }
   }
 }
