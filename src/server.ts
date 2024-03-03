@@ -14,6 +14,7 @@ import productsRouter from './routes/products'
 import categoriesRouter from './routes/categories'
 import newsRouter from './routes/news'
 import ordersRouter from './routes/orders'
+import outfitsRouter from './routes/outfits'
 
 mongoose
   // eslint-disable-next-line @typescript-eslint/non-nullable-type-assertion-style
@@ -60,6 +61,7 @@ app.use('/products', productsRouter)
 app.use('/categories', categoriesRouter)
 app.use('/news', newsRouter)
 app.use('/orders', ordersRouter)
+app.use('/outfits', outfitsRouter)
 
 app.all('*', (req: express.Request, res: express.Response) => {
   res.status(404).send({ success: false, message: '找不到' })

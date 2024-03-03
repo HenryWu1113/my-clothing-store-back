@@ -16,10 +16,17 @@ import {
 
 const router = express.Router()
 
+// 創建訂單
 router.post('/', content('application/json'), auth.jwt('user'), createOrder)
+// 取得我的所有訂單
 router.get('/', auth.jwt('user'), getOrders)
+// 取得所有使用者訂單
 router.get('/all', auth.jwt('admin'), admin, getAllOrders)
-router.get('/:id', auth.jwt('user'), getOrder)
+// 取得我的其中一筆訂單(使用者)
+router.get('/user/:id', auth.jwt('user'), getOrder)
+// 取得其中一筆訂單(管理者)
+router.get('/admin/:id', auth.jwt('admin'), getOrder)
+// 更新訂單
 router.patch(
   '/:id',
   content('application/json'),
