@@ -121,16 +121,24 @@ export const getUser = async (req: any, res: express.Response) => {
   }
 }
 
-export const getAllUsers = async (req: express.Request, res: express.Response) => {
+export const getAllUsers = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
-    const result = await users.find().select('-tokens -hashedPassword -cart -favorites')
+    const result = await users
+      .find()
+      .select('-tokens -hashedPassword -cart -favorites')
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
 
-export const editAllUsers = async (req: express.Request, res: express.Response) => {
+export const editAllUsers = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     // 不給更新 email 因為他目前當作登入帳號
     const data = {
@@ -152,9 +160,12 @@ export const editAllUsers = async (req: express.Request, res: express.Response) 
       return res.status(400).send({ success: false, message: '性別錯誤' })
     }
 
-    const result = await users.findByIdAndUpdate(req.params.userId, { $set: data }, { new: true })
+    const result = await users
+      .findByIdAndUpdate(req.params.userId, { $set: data }, { new: true })
       .select('-tokens -hashedPassword -cart -favorites')
-    res.status(200).send({ success: true, message: '更新使用者資訊成功', result })
+    res
+      .status(200)
+      .send({ success: true, message: '更新使用者資訊成功', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
@@ -391,7 +402,13 @@ export const getFavs = async (req: any, res: express.Response) => {
   try {
     const result: any = await users
       .findById(req.user._id, 'favorites')
-      .populate('favorites')
+      .populate({
+        path: 'favorites',
+        populate: {
+          path: 'ratings',
+          select: 'score _id' // 只返回 score 和 _id 字段
+        }
+      })
     console.log(result)
     res
       .status(200)
