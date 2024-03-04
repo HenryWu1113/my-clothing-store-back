@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+import mongoose from 'mongoose'
 import express from 'express'
 import outfits from '../models/outfits'
 
@@ -41,7 +42,7 @@ export const getOutfits = async (
       show: true
     }
 
-    const result = await outfits.find(query)
+    const result = await outfits.find(query).sort({ createdAt: -1 })
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
@@ -56,7 +57,7 @@ export const getAllOutfits = async (
   res: express.Response
 ) => {
   try {
-    const result = await outfits.find()
+    const result = await outfits.find().sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -66,7 +67,22 @@ export const getAllOutfits = async (
 /** 取得該店員所有穿搭(店員所有自己新增的) */
 export const getClerkOutfits = async (req: any, res: express.Response) => {
   try {
-    const result = await outfits.find({ clerk: req.params.id })
+    const result = await outfits.find({ clerk: req.params.id }).sort({ createdAt: -1 })
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const getRelatedOutfits = async (req: express.Request, res: express.Response) => {
+  try {
+    // $unwind 是 MongoDB 的聚合操作符之一，用於拆分陣列欄位中的每個元素為獨立的文檔，每個文檔都包含原始文檔的其餘欄位的副本。這樣做有助於處理包含陣列的文檔。
+    const result = await outfits.aggregate([
+      { $match: { show: true } },
+      { $unwind: '$products' },
+      { $match: { 'products.product': new mongoose.Types.ObjectId(req.params.productId) } }
+    ]).sort({ createdAt: -1 })
+
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

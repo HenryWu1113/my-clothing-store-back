@@ -77,7 +77,7 @@ export const getOrders = async (req: any, res: express.Response) => {
   try {
     const result = await orders
       .find({ user: req.user._id })
-      .populate('products.product')
+      .populate('products.product').sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -100,7 +100,7 @@ export const getAllOrders = async (
   res: express.Response
 ) => {
   try {
-    const result = await orders.find()
+    const result = await orders.find().sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

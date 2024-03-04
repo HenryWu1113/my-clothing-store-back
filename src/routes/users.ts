@@ -13,6 +13,8 @@ import {
   logout,
   extend,
   getUser,
+  getAllUsers,
+  editAllUsers,
   editUser,
   addCart,
   editCart,
@@ -34,15 +36,15 @@ router.post('/extend', auth.jwt(mode), extend)
 router.get('/', auth.jwt(mode), getUser)
 
 // 取得所有使用者(管理者專用)
-// router.get('/all', auth.jwt('admin'),admin, getAllUsers)
+router.get('/all', auth.jwt('admin'), admin, getAllUsers)
 // 管理者編輯使用者
-// router.patch(
-//   '/admin/:userId',
-//   content('application/json'),
-//   auth.jwt(mode),
-//   admin,
-//   editAllUsers
-// )
+router.patch(
+  '/manager/:userId',
+  content('application/json'),
+  auth.jwt('admin'),
+  admin,
+  editAllUsers
+)
 
 // 文本系列更新
 router.patch('/', content('application/json'), auth.jwt(mode), editUser)

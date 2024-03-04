@@ -12,6 +12,7 @@ import {
   getAllOutfits,
   getClerkOutfits,
   getOutfit,
+  getRelatedOutfits,
   editOutfit,
   deleteOutfit
 } from '../controllers/outfits'
@@ -37,6 +38,8 @@ router.get('/clerk/:id', getClerkOutfits)
 router.get('/all', auth.jwt(mode), admin, getAllOutfits)
 // 取得單筆穿搭
 router.get('/:id', getOutfit)
+// 取得商品相關穿搭
+router.get('/related/:productId', getRelatedOutfits)
 // 更新穿搭
 router.patch(
   '/:id',

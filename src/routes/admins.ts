@@ -13,6 +13,8 @@ import {
   logout,
   extend,
   getAdmin,
+  getAllClerks,
+  editAllClerks,
   editAdmin,
   editAdminImage
 } from '../controllers/admins'
@@ -29,15 +31,15 @@ router.post('/extend', auth.jwt(mode), extend)
 router.get('/', auth.jwt(mode), getAdmin)
 
 // 取得所有員工(管理者專用)
-// router.get('/all', auth.jwt('admin'),admin, getAllAdmins)
+router.get('/all', auth.jwt(mode), admin, getAllClerks)
 // 管理者編輯其他員工
-// router.patch(
-//   '/admin/:adminId',
-//   content('application/json'),
-//   auth.jwt(mode),
-//   admin,
-//   editAllAdmins
-// )
+router.patch(
+  '/manager/:adminId',
+  content('application/json'),
+  auth.jwt(mode),
+  admin,
+  editAllClerks
+)
 
 // 文本系列更新
 router.patch('/', content('application/json'), auth.jwt(mode), editAdmin)

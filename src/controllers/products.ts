@@ -57,7 +57,7 @@ export const getProducts = async (
       query.clothingGender = clothingGender
     }
 
-    const result = await products.find(query).populate('ratings', 'score')
+    const result = await products.find(query).populate('ratings', 'score').sort({ createdAt: -1 })
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
@@ -71,7 +71,7 @@ export const getAllProducts = async (
   res: express.Response
 ) => {
   try {
-    const result = await products.find().populate('ratings', 'score')
+    const result = await products.find().populate('ratings', 'score').sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

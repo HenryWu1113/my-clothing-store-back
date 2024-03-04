@@ -121,6 +121,45 @@ export const getUser = async (req: any, res: express.Response) => {
   }
 }
 
+export const getAllUsers = async (req: express.Request, res: express.Response) => {
+  try {
+    const result = await users.find().select('-tokens -hashedPassword -cart -favorites')
+    res.status(200).send({ success: true, message: '', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
+export const editAllUsers = async (req: express.Request, res: express.Response) => {
+  try {
+    // 不給更新 email 因為他目前當作登入帳號
+    const data = {
+      // email: req.body.email,
+      address: req.body.address,
+      cellphone: req.body.cellphone,
+      name: req.body.name,
+      sex: req.body.sex,
+      birthday: req.body.birthday
+    }
+
+    if (
+      data.cellphone !== undefined &&
+      !validator.isMobilePhone(String(data.cellphone), 'zh-TW')
+    ) {
+      return res.status(400).send({ success: false, message: '不合法手機號碼' })
+    }
+    if (data.sex !== undefined && !['男', '女'].includes(data.sex)) {
+      return res.status(400).send({ success: false, message: '性別錯誤' })
+    }
+
+    const result = await users.findByIdAndUpdate(req.params.userId, { $set: data }, { new: true })
+      .select('-tokens -hashedPassword -cart -favorites')
+    res.status(200).send({ success: true, message: '更新使用者資訊成功', result })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
 export const editUser = async (req: any, res: express.Response) => {
   try {
     // 不給更新 email 因為他目前當作登入帳號

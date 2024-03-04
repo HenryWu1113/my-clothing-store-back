@@ -50,7 +50,7 @@ export const getProductAllRatings = async (
     // 使用者只回傳 avatar 和 name
     const result = await ratings
       .find({ product: req.params.productId })
-      .populate('user', 'avatar name')
+      .populate('user', 'avatar name').sort({ createdAt: -1 })
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
@@ -68,7 +68,7 @@ export const getUserAllRatings = async (
     // 使用者只回傳 avatar 和 name
     const result = await ratings
       .find({ user: req.params.userId })
-      .populate('user', 'avatar name')
+      .populate('user', 'avatar name').sort({ createdAt: -1 })
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
