@@ -43,23 +43,37 @@ export const getProducts = async (
   res: express.Response
 ) => {
   try {
-    // 只找上架中
+    console.log(req.query)
+    const { clothingGender, gte, lte, sort, q } = req.query
+    /** 搜尋條件 */
     const query: Record<string, any> = {
-      sell: true
+      /** 上架中 */
+      sell: true,
+      /** 分類(男裝、女裝) */
+      clothingGender
     }
 
-    // 取 query string
-    /** 分類(男裝、女裝) */
-    const clothingGender = req.query.clothingGender
-
-    // 有此值就加入 query 條件
-    if (clothingGender) {
-      query.clothingGender = clothingGender
+    if (q !== undefined) {
+      query.name = { $regex: q, $options: 'i' }
     }
 
-    const result = await products.find(query).populate('ratings', 'score').sort({ createdAt: -1 })
+    if (gte !== undefined && lte !== undefined) {
+      query.price = { $gte: Number(gte), $lte: Number(lte) }
+    }
 
-    console.log(result)
+    let sortVal: Record<string, any> = { createdAt: -1 }
+    if (sort === 'integrate') {
+      sortVal = { soldQuantity: -1, createdAt: -1 }
+    } else if (sort === 'LtoH') {
+      sortVal = { price: 1, createdAt: -1 }
+    } else if (sort === 'HtoL') {
+      sortVal = { price: -1, createdAt: -1 }
+    }
+
+    console.log(query)
+
+    const result = await products.find(query).populate('ratings', 'score').sort(sortVal)
+
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

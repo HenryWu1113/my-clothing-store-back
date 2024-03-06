@@ -40,6 +40,7 @@ export const createOrder = async (req: any, res: express.Response) => {
       }
 
       allProducts[idx].stockQuantity -= item.quantity
+      allProducts[idx].soldQuantity += item.quantity
     }
 
     // 建立訂單 products 物件陣列儲存當前商品售價，之後商品售價改變不會影響訂單的價格
