@@ -5,6 +5,8 @@
 import mongoose from 'mongoose'
 import express from 'express'
 import outfits from '../models/outfits'
+import admins from '../models/admins'
+import admin from 'middleware/admin'
 
 export const createOutfit = async (req: any, res: express.Response) => {
   try {
@@ -67,23 +69,58 @@ export const getAllOutfits = async (
 /** 取得該店員所有穿搭(店員所有自己新增的) */
 export const getClerkOutfits = async (req: any, res: express.Response) => {
   try {
-    const result = await outfits.find({ clerk: req.params.id }).sort({ createdAt: -1 })
+    const result = await outfits
+      .find({ clerk: req.params.id })
+      .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
 
-export const getRelatedOutfits = async (req: express.Request, res: express.Response) => {
+export const getRelatedOutfits = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     // $unwind 是 MongoDB 的聚合操作符之一，用於拆分陣列欄位中的每個元素為獨立的文檔，每個文檔都包含原始文檔的其餘欄位的副本。這樣做有助於處理包含陣列的文檔。
-    const result = await outfits.aggregate([
-      { $match: { show: true } },
-      { $unwind: '$products' },
-      { $match: { 'products.product': new mongoose.Types.ObjectId(req.params.productId) } }
-    ]).sort({ createdAt: -1 })
+    const result = await outfits
+      .aggregate([
+        { $match: { show: true } },
+        { $unwind: '$products' },
+        {
+          $match: {
+            'products.product': new mongoose.Types.ObjectId(
+              req.params.productId
+            )
+          }
+        }
+      ])
+      .sort({ createdAt: -1 })
 
-    res.status(200).send({ success: true, message: '', result })
+    // const clerks = await admins.find({ role: 'clerk' })
+    const clerks = await admins.find()
+    // console.log(clerks)
+
+    const resultRefAdmins = result.map((item) => {
+      const idx = clerks.findIndex((clerk) => clerk._id.equals(item.clerk))
+
+      return {
+        ...item,
+        clerk: {
+          name: clerks[idx].name,
+          avatar: clerks[idx].avatar,
+          height: clerks[idx].height,
+          weight: clerks[idx].weight,
+          _id: clerks[idx]._id,
+          sex: clerks[idx].sex
+        }
+      }
+    })
+
+    res
+      .status(200)
+      .send({ success: true, message: '', result: resultRefAdmins })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
