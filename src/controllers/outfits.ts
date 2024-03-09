@@ -6,7 +6,6 @@ import mongoose from 'mongoose'
 import express from 'express'
 import outfits from '../models/outfits'
 import admins from '../models/admins'
-import admin from 'middleware/admin'
 
 export const createOutfit = async (req: any, res: express.Response) => {
   try {
