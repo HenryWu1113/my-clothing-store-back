@@ -10,6 +10,7 @@ export const createRating = async (req: any, res: express.Response) => {
   try {
     const result = await ratings.create({
       ...req.body,
+      user: req.user._id,
       images:
         req.files?.map((file: any) => {
           return file.path
@@ -50,7 +51,8 @@ export const getProductAllRatings = async (
     // 使用者只回傳 avatar 和 name
     const result = await ratings
       .find({ product: req.params.productId })
-      .populate('user', 'avatar name').sort({ createdAt: -1 })
+      .populate('user', 'avatar name')
+      .sort({ createdAt: -1 })
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
@@ -68,7 +70,8 @@ export const getUserAllRatings = async (
     // 使用者只回傳 avatar 和 name
     const result = await ratings
       .find({ user: req.params.userId })
-      .populate('user', 'avatar name').sort({ createdAt: -1 })
+      .populate('user', 'avatar name')
+      .sort({ createdAt: -1 })
 
     console.log(result)
     res.status(200).send({ success: true, message: '', result })
@@ -79,7 +82,10 @@ export const getUserAllRatings = async (
 
 export const editRating = async (req: any, res: express.Response) => {
   try {
-    const data: any = req.body
+    const data: any = {
+      ...req.body,
+      user: req.user._id
+    }
 
     if (req?.files?.length > 0) {
       data.images = req.files?.map((file: any) => {
