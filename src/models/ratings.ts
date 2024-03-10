@@ -19,8 +19,7 @@ const schema = new mongoose.Schema(
       max: 5
     },
     description: {
-      type: String,
-      required: true
+      type: String
     },
     images: {
       type: [String]
