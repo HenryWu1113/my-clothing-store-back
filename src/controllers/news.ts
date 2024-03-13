@@ -11,7 +11,7 @@ export const createNews = async (req: any, res: express.Response) => {
     console.log(req.file)
     const result = await news.create({
       ...req.body,
-      image: req.file.path
+      image: req.file?.path
     })
     res.status(200).send({ success: true, message: '', result })
   } catch (error: any) {
