@@ -44,13 +44,21 @@ export const getProducts = async (
 ) => {
   try {
     console.log(req.query)
-    const { clothingGender, gte, lte, sort, q } = req.query
+    const { clothingGender, clothingPart, gte, lte, sort, q, limit } = req.query
     /** 搜尋條件 */
     const query: Record<string, any> = {
       /** 上架中 */
-      sell: true,
-      /** 分類(男裝、女裝) */
-      clothingGender
+      sell: true
+    }
+
+    // 分類(男裝、女裝)
+    if (clothingGender !== undefined) {
+      query.clothingGender = clothingGender
+    }
+
+    // 分類(短袖、長袖、長褲...)
+    if (clothingPart !== undefined) {
+      query.clothingPart = clothingPart
     }
 
     if (q !== undefined) {
@@ -72,7 +80,11 @@ export const getProducts = async (
 
     console.log(query)
 
-    const result = await products.find(query).populate('ratings', 'score').sort(sortVal)
+    const result = await products
+      .find(query)
+      .populate('ratings', 'score')
+      .sort(sortVal)
+      .limit(Number(limit) || 999)
 
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
@@ -85,7 +97,10 @@ export const getAllProducts = async (
   res: express.Response
 ) => {
   try {
-    const result = await products.find().populate('ratings', 'score').sort({ createdAt: -1 })
+    const result = await products
+      .find()
+      .populate('ratings', 'score')
+      .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

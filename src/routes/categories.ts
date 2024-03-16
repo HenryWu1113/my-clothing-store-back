@@ -18,8 +18,8 @@ const router = express.Router()
 /** 使用者模式 */
 const mode = 'admin'
 
-router.get('/:id', auth.jwt(mode), admin, getCategory)
-router.get('/', auth.jwt(mode), admin, getCategories)
+router.get('/', getCategories)
+router.get('/:id', getCategory)
 
 router.post(
   '/',

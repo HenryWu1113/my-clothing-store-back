@@ -52,7 +52,7 @@ export const login = async (req: any, res: express.Response) => {
       { _id: req.admin._id },
       process.env.SECRET as string,
       {
-        expiresIn: '1 days'
+        expiresIn: '7 days'
       }
     )
     req.admin.tokens.push(token)
@@ -121,16 +121,24 @@ export const getAdmin = async (req: any, res: express.Response) => {
   }
 }
 
-export const getAllClerks = async (req: express.Request, res: express.Response) => {
+export const getAllClerks = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
-    const result = await admins.find({ role: 'clerk' }).select('-tokens -hashedPassword -cart -favorites')
+    const result = await admins
+      .find({ role: 'clerk' })
+      .select('-tokens -hashedPassword -cart -favorites')
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
 
-export const editAllClerks = async (req: express.Request, res: express.Response) => {
+export const editAllClerks = async (
+  req: express.Request,
+  res: express.Response
+) => {
   try {
     const data = {
       email: req.body.email,
@@ -155,9 +163,12 @@ export const editAllClerks = async (req: express.Request, res: express.Response)
     if (data.sex !== undefined && !['男', '女'].includes(data.sex)) {
       return res.status(400).send({ success: false, message: '性別錯誤' })
     }
-    const result = await admins.findByIdAndUpdate(req.params.adminId, { $set: data }, { new: true })
+    const result = await admins
+      .findByIdAndUpdate(req.params.adminId, { $set: data }, { new: true })
       .select('-tokens -hashedPassword -cart -favorites')
-    res.status(200).send({ success: true, message: '更新使用者資訊成功', result })
+    res
+      .status(200)
+      .send({ success: true, message: '更新使用者資訊成功', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }

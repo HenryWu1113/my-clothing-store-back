@@ -49,7 +49,20 @@ export const getCategories = async (
   res: express.Response
 ) => {
   try {
-    const result = await categories.find()
+    const { gender, categoryType, key } = req.query
+    console.log(gender, categoryType)
+    const query: Record<string, any> = {}
+    // 前端不會傳 all, all 代表這分類是男女共用，而不是查找用，查找 gender 不用傳
+    if (gender !== undefined && gender !== 'all') {
+      query.$or = [{ gender }, { gender: 'all' }]
+    }
+    if (categoryType !== undefined) {
+      query.categoryType = categoryType
+    }
+    if (key !== undefined) {
+      query.key = key
+    }
+    const result = await categories.find(query)
     if (!result) {
       return res.status(404).send({ success: false, message: '沒有任何分類' })
     }
