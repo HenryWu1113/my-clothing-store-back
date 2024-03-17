@@ -132,7 +132,15 @@ export const getOutfit = async (
   try {
     const result = await outfits
       .findById(req.params.id)
-      .populate('products.product')
+      .populate({
+        path: 'clerk',
+        select: 'name sex height weight avatar store', // 選擇要帶出的 clerk 屬性
+        populate: {
+          path: 'store', // 嵌套 populate store
+          select: 'name'
+        }
+      })
+      .populate({ path: 'products.product' })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
