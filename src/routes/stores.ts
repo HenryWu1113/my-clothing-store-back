@@ -18,8 +18,8 @@ const router = express.Router()
 /** 使用者模式 */
 const mode = 'admin'
 
-router.get('/:id', getStore)
 router.get('/', getStores)
+router.get('/:id', getStore)
 
 router.post(
   '/',
