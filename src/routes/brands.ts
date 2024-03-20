@@ -18,7 +18,7 @@ const router = express.Router()
 const mode = 'admin'
 
 router.get('/:id', auth.jwt(mode), admin, getBrand)
-router.get('/', auth.jwt(mode), admin, getBrands)
+router.get('/', getBrands)
 
 router.post(
   '/',

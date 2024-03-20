@@ -91,6 +91,10 @@ const schema = new mongoose.Schema(
       },
       default: '備貨中'
     },
+    deliveryFee: {
+      type: Number,
+      default: 0
+    },
     totalAmount: {
       type: Number,
       required: [true, '缺少總金額']

@@ -28,7 +28,8 @@ const schema = new mongoose.Schema(
     },
     discountRate: {
       type: Number,
-      default: 0.0
+      default: 0,
+      max: 100
     },
     clothingGender: {
       type: String,

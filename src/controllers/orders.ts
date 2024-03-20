@@ -6,6 +6,7 @@ import express from 'express'
 import users from '../models/users'
 import orders from '../models/orders'
 import products from '../models/products'
+import brands from '../models/brands'
 
 export const createOrder = async (req: any, res: express.Response) => {
   try {
@@ -43,17 +44,45 @@ export const createOrder = async (req: any, res: express.Response) => {
       allProducts[idx].soldQuantity += item.quantity
     }
 
+    /** 取得商城資訊(運費、免運金額) */
+    let brandFee = {
+      deliveryFee: 0,
+      freeDeliveryFee: 0
+    }
+    const AllBrand = await brands.find()
+
+    if (AllBrand.length > 0) {
+      const brand = AllBrand[0]
+      const { deliveryFee, freeDeliveryFee } = brand
+      brandFee = {
+        deliveryFee,
+        freeDeliveryFee
+      }
+    }
+
+    /** 總金額(數量乘金額乘打折) */
+    let amount = user.cart.reduce(
+      (acc, cur: any) =>
+        acc +
+        cur.quantity *
+          cur.product.price *
+          ((100 - cur.product.discountRate) / 100),
+      0
+    )
+
+    // 如果總金額比免運錢少 加上運費
+    if (amount < brandFee.freeDeliveryFee) {
+      amount += brandFee.deliveryFee
+    }
     // 建立訂單 products 物件陣列儲存當前商品售價，之後商品售價改變不會影響訂單的價格
     const result = await orders.create({
       ...req.body,
       products: user.cart.map((item: any) => ({
         ...item,
-        price: item.product.price
+        price: item.product.price * ((100 - item.product.discountRate) / 100)
       })),
-      totalAmount: user.cart.reduce(
-        (acc, cur: any) => acc + cur.quantity * cur.product.price,
-        0
-      )
+      deliveryFee: amount < brandFee.freeDeliveryFee ? brandFee.deliveryFee : 0,
+      totalAmount: amount
     })
 
     // 清空購物車
@@ -78,7 +107,8 @@ export const getOrders = async (req: any, res: express.Response) => {
   try {
     const result = await orders
       .find({ user: req.user._id })
-      .populate('products.product').sort({ createdAt: -1 })
+      .populate('products.product')
+      .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
