@@ -36,6 +36,10 @@ const schema = new mongoose.Schema(
         }
       ]
     },
+    payMethod: {
+      type: String,
+      required: [true, '缺少付款方式']
+    },
     deliveryMethod: {
       type: String,
       required: [true, '缺少取貨方式']
