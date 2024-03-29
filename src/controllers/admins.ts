@@ -121,6 +121,28 @@ export const getAdmin = async (req: any, res: express.Response) => {
   }
 }
 
+/** 點擊店員取得部分店員資訊 */
+export const getNormalAdmin = async (req: any, res: express.Response) => {
+  try {
+    const result = await admins
+      .findById(req.params.id)
+      .populate('store')
+      .select('-tokens -hashedPassword')
+
+    if (!result) {
+      return res.status(404).send({ success: false, message: '找不到店員' })
+    }
+
+    res.status(200).send({
+      success: true,
+      message: '',
+      result
+    })
+  } catch (error) {
+    res.status(500).send({ success: false, message: '伺服器錯誤' })
+  }
+}
+
 export const getAllClerks = async (
   req: express.Request,
   res: express.Response
@@ -148,7 +170,8 @@ export const editAllClerks = async (
       sex: req.body.sex,
       birthday: req.body.birthday,
       height: req.body.height,
-      weight: req.body.weight
+      weight: req.body.weight,
+      introduce: req.body.introduce
     }
 
     if (data.email !== undefined && !validator.isEmail(data.email)) {
@@ -184,7 +207,8 @@ export const editAdmin = async (req: any, res: express.Response) => {
       sex: req.body.sex,
       birthday: req.body.birthday,
       height: req.body.height,
-      weight: req.body.weight
+      weight: req.body.weight,
+      introduce: req.body.introduce
     }
 
     if (data.email !== undefined && !validator.isEmail(data.email)) {

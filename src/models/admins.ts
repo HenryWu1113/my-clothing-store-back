@@ -85,6 +85,9 @@ const schema = new mongoose.Schema(
     },
     backgroundImg: {
       type: String
+    },
+    introduce: {
+      type: String
     }
   },
   { timestamps: true, versionKey: false }

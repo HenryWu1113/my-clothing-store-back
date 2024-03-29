@@ -13,6 +13,7 @@ import {
   logout,
   extend,
   getAdmin,
+  getNormalAdmin,
   getAllClerks,
   editAllClerks,
   editAdmin,
@@ -29,6 +30,8 @@ router.post('/login', content('application/json'), auth.login(mode), login)
 router.delete('/logout', auth.jwt(mode), logout)
 router.post('/extend', auth.jwt(mode), extend)
 router.get('/', auth.jwt(mode), getAdmin)
+// 取得店員基本資訊(點擊店員時)
+router.get('/clerk/:id', getNormalAdmin)
 
 // 取得所有員工(管理者專用)
 router.get('/all', auth.jwt(mode), admin, getAllClerks)

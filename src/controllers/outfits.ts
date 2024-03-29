@@ -70,6 +70,7 @@ export const getClerkOutfits = async (req: any, res: express.Response) => {
   try {
     const result = await outfits
       .find({ clerk: req.params.id })
+      .populate('clerk', '-tokens -hashedPassword ')
       .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
