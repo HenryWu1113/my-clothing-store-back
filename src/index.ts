@@ -33,7 +33,7 @@ app.use(
       // console.log(origin)
       if (
         origin === undefined ||
-        origin.includes('github') ||
+        origin.includes('https://my-clothing-store-back.vercel.app') ||
         origin.includes('localhost')
       ) {
         callback(null, true)
