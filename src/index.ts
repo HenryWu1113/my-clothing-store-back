@@ -4,6 +4,8 @@ import 'dotenv/config'
 import express from 'express'
 import mongoose from 'mongoose'
 import cors from 'cors'
+import path from 'path'
+import history from 'connect-history-api-fallback'
 
 import './passport/passport'
 import brandsRouter from './routes/brands'
@@ -25,6 +27,17 @@ mongoose
   })
 
 const app = express()
+
+// 配置靜態資源目錄，確保能夠存取打包後的前端資源文件
+app.use(express.static(path.resolve(__dirname, 'public')))
+
+// 使用 HTML5 History 模式的中間件，確保在非首頁刷新時能夠正確路由到對應的頁面
+app.use(
+  history({
+    verbose: true,
+    index: '/'
+  })
+)
 
 app.use(
   cors({
