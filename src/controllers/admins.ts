@@ -163,6 +163,7 @@ export const editAllClerks = async (
 ) => {
   try {
     const data = {
+      account: req.body.account,
       email: req.body.email,
       address: req.body.address,
       cellphone: req.body.cellphone,
@@ -171,7 +172,8 @@ export const editAllClerks = async (
       birthday: req.body.birthday,
       height: req.body.height,
       weight: req.body.weight,
-      introduce: req.body.introduce
+      introduce: req.body.introduce,
+      disabled: req.body.disabled
     }
 
     if (data.email !== undefined && !validator.isEmail(data.email)) {
@@ -189,9 +191,7 @@ export const editAllClerks = async (
     const result = await admins
       .findByIdAndUpdate(req.params.adminId, { $set: data }, { new: true })
       .select('-tokens -hashedPassword -cart -favorites')
-    res
-      .status(200)
-      .send({ success: true, message: '更新使用者資訊成功', result })
+    res.status(200).send({ success: true, message: '更新店員資訊成功', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
