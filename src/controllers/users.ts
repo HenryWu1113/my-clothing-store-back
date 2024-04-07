@@ -147,7 +147,8 @@ export const editAllUsers = async (
       cellphone: req.body.cellphone,
       name: req.body.name,
       sex: req.body.sex,
-      birthday: req.body.birthday
+      birthday: req.body.birthday,
+      disabled: req.body.disabled
     }
 
     if (
