@@ -47,6 +47,7 @@ app.use(
       if (
         origin === undefined ||
         origin.includes('https://my-clothing-store-front.vercel.app') ||
+        origin.includes('https://my-clothing-store-admin.vercel.app') ||
         origin.includes('localhost')
       ) {
         callback(null, true)
