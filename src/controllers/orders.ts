@@ -131,7 +131,10 @@ export const getAllOrders = async (
   res: express.Response
 ) => {
   try {
-    const result = await orders.find().sort({ createdAt: -1 })
+    const result = await orders
+      .find()
+      .populate('products.product')
+      .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
