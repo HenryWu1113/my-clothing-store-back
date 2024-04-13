@@ -5,6 +5,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import admins from '../models/admins'
+import stores from '../models/stores'
 import bcrypt from 'bcrypt'
 import express from 'express'
 import jwt from 'jsonwebtoken'
@@ -111,10 +112,15 @@ export const getAdmin = async (req: any, res: express.Response) => {
     delete deepcopyUser.hashedPassword
     delete deepcopyUser.tokens
 
+    const result = await admins
+      .findById(req.admin._id)
+      .populate('store')
+      .select('-tokens -hashedPassword')
+
     res.status(200).send({
       success: true,
       message: '',
-      result: deepcopyUser
+      result
     })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

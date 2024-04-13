@@ -52,9 +52,9 @@ export const getCategories = async (
     const { gender, categoryType, key } = req.query
     console.log(gender, categoryType)
     const query: Record<string, any> = {}
-    // 前端不會傳 all, all 代表這分類是男女共用，而不是查找用，查找 gender 不用傳
-    if (gender !== undefined && gender !== 'all') {
-      query.$or = [{ gender }, { gender: 'all' }]
+    // 前端不會傳 全部, 全部 代表這分類是男女共用，而不是查找用，查找 gender 不用傳
+    if (gender !== undefined && gender !== '全部') {
+      query.$or = [{ gender }, { gender: '全部' }]
     }
     if (categoryType !== undefined) {
       query.categoryType = categoryType

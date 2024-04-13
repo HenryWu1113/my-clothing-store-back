@@ -22,7 +22,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ['male', 'female', 'all'],
+        values: ['男', '女', '全部'],
         message: '錯誤的性別分類'
       }
     }
