@@ -43,11 +43,23 @@ const schema = new mongoose.Schema(
       type: [String]
     },
     colors: {
-      type: [String],
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'categories',
+          required: [true, '缺少顏色']
+        }
+      ],
       required: true
     },
     sizes: {
-      type: [String],
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'categories',
+          required: [true, '缺少尺寸']
+        }
+      ],
       required: true
     },
     ratings: {

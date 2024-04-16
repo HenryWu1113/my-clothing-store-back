@@ -6,7 +6,7 @@ const schema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ['color', 'clothingPart'],
+        values: ['color', 'clothingPart', 'size'],
         message: '錯誤的分類類型'
       }
     },

@@ -22,12 +22,14 @@ const schema = new mongoose.Schema(
             required: [true, '缺少數量欄位']
           },
           color: {
-            type: String,
-            required: [true, '缺少數量欄位']
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categories',
+            required: [true, '缺少顏色欄位']
           },
           size: {
-            type: String,
-            required: [true, '缺少數量欄位']
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categories',
+            required: [true, '缺少尺寸欄位']
           },
           price: {
             type: Number,

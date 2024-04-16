@@ -85,6 +85,8 @@ export const createOrder = async (req: any, res: express.Response) => {
       totalAmount: amount
     })
 
+    console.log('建立訂單了')
+
     // 清空購物車
     await users.findByIdAndUpdate(
       req.user._id,
@@ -92,13 +94,18 @@ export const createOrder = async (req: any, res: express.Response) => {
       { new: true }
     )
 
+    console.log('清空購物車了')
+
     // 儲存經過扣掉庫存後的商品
     for (const product of allProducts) {
       await product.save()
     }
 
+    console.log('儲存經過扣掉庫存後的商品了')
+
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
+    console.log(error)
     res.status(500).send({ success: false, message: '伺服器錯誤' })
   }
 }
@@ -107,7 +114,16 @@ export const getOrders = async (req: any, res: express.Response) => {
   try {
     const result = await orders
       .find({ user: req.user._id })
-      .populate('products.product')
+      .populate({
+        path: 'products.product',
+        populate: { path: 'colors' } // populate colors within products.product
+      })
+      .populate({
+        path: 'products.product',
+        populate: { path: 'sizes' } // populate sizes within products.product
+      })
+      .populate('products.color')
+      .populate('products.size')
       .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
@@ -119,7 +135,16 @@ export const getOrder = async (req: express.Request, res: express.Response) => {
   try {
     const result = await orders
       .findById(req.params.id)
-      .populate('products.product')
+      .populate({
+        path: 'products.product',
+        populate: { path: 'colors' } // populate colors within products.product
+      })
+      .populate({
+        path: 'products.product',
+        populate: { path: 'sizes' } // populate sizes within products.product
+      })
+      .populate('products.color')
+      .populate('products.size')
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -133,7 +158,16 @@ export const getAllOrders = async (
   try {
     const result = await orders
       .find()
-      .populate('products.product')
+      .populate({
+        path: 'products.product',
+        populate: { path: 'colors' } // populate colors within products.product
+      })
+      .populate({
+        path: 'products.product',
+        populate: { path: 'sizes' } // populate sizes within products.product
+      })
+      .populate('products.color')
+      .populate('products.size')
       .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
@@ -154,7 +188,16 @@ export const editOrder = async (
         },
         { new: true }
       )
-      .populate('products.product')
+      .populate({
+        path: 'products.product',
+        populate: { path: 'colors' } // populate colors within products.product
+      })
+      .populate({
+        path: 'products.product',
+        populate: { path: 'sizes' } // populate sizes within products.product
+      })
+      .populate('products.color')
+      .populate('products.size')
 
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {

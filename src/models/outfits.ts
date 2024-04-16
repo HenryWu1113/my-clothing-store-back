@@ -28,12 +28,14 @@ const schema = new mongoose.Schema(
             required: [true, '缺少商品欄位']
           },
           color: {
-            type: String,
-            required: [true, '缺少商品顏色']
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categories',
+            required: [true, '缺少顏色欄位']
           },
           size: {
-            type: String,
-            required: [true, '缺少商品尺寸']
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'categories',
+            required: [true, '缺少尺寸欄位']
           }
         }
       ]

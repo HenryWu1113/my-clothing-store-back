@@ -257,8 +257,8 @@ export const addCart = async (req: any, res: express.Response) => {
         size: string
       }) =>
         item.product.toString() === req.body.product &&
-        item.color === req.body.color &&
-        item.size === req.body.size
+        item.color.toString() === req.body.color &&
+        item.size.toString() === req.body.size
     )
 
     console.log(idx)
@@ -291,6 +291,7 @@ export const addCart = async (req: any, res: express.Response) => {
 
 export const editCart = async (req: any, res: express.Response) => {
   // 試一下 mongoose 語法
+  console.log(req.body)
   try {
     let user: any = 0
 
@@ -349,6 +350,8 @@ export const getCart = async (req: any, res: express.Response) => {
     const result = await users
       .findById(req.user._id, 'cart')
       .populate('cart.product')
+      .populate('cart.color')
+      .populate('cart.size')
 
     if (!result) {
       return res.status(404).send({ success: false, message: '找不到使用者' })

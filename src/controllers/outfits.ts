@@ -142,6 +142,8 @@ export const getOutfit = async (
         }
       })
       .populate({ path: 'products.product' })
+      .populate({ path: 'products.color' })
+      .populate({ path: 'products.size' })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })

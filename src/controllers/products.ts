@@ -83,6 +83,7 @@ export const getProducts = async (
     const result = await products
       .find(query)
       .populate('ratings', 'score')
+      .populate('colors sizes')
       .sort(sortVal)
       .limit(Number(limit) || 999)
 
@@ -100,6 +101,7 @@ export const getAllProducts = async (
     const result = await products
       .find()
       .populate('ratings', 'score')
+      .populate('colors sizes')
       .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
@@ -115,6 +117,7 @@ export const getProduct = async (
     const result = await products
       .findById(req.params.id)
       .populate('ratings', 'score')
+      .populate('colors sizes')
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -150,6 +153,7 @@ export const editProduct = async (req: any, res: express.Response) => {
         new: true
       })
       .populate('ratings', 'score')
+      .populate('colors sizes')
     res.status(200).send({ success: true, message: '', result })
   } catch (error: any) {
     if (error.name === 'ValidationError') {
