@@ -149,9 +149,15 @@ export const editProduct = async (req: any, res: express.Response) => {
     }
 
     const result = await products
-      .findByIdAndUpdate(req.params.id, data, {
-        new: true
-      })
+      .findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: data
+        },
+        {
+          new: true
+        }
+      )
       .populate('ratings', 'score')
       .populate('colors sizes')
     res.status(200).send({ success: true, message: '', result })
