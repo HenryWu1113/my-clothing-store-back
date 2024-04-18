@@ -58,7 +58,12 @@ export const getAllOutfits = async (
   res: express.Response
 ) => {
   try {
-    const result = await outfits.find().sort({ createdAt: -1 })
+    const result = await outfits
+      .find()
+      .populate({ path: 'products.product' })
+      .populate({ path: 'products.color' })
+      .populate({ path: 'products.size' })
+      .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
     res.status(500).send({ success: false, message: '伺服器錯誤' })
@@ -71,6 +76,9 @@ export const getClerkOutfits = async (req: any, res: express.Response) => {
     const result = await outfits
       .find({ clerk: req.params.id })
       .populate('clerk', '-tokens -hashedPassword ')
+      .populate({ path: 'products.product' })
+      .populate({ path: 'products.color' })
+      .populate({ path: 'products.size' })
       .sort({ createdAt: -1 })
     res.status(200).send({ success: true, message: '', result })
   } catch (error) {
