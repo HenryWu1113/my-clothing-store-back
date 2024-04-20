@@ -163,16 +163,17 @@ export const editOutfit = async (req: any, res: express.Response) => {
     const data: any = {
       outfitName: req.body.outfitName,
       description: req.body.description,
-      clerk: req.body.clerk,
-      products: req.body.products,
+      products: req.body.products.map((item: any) => JSON.parse(item)),
       show: req.body.show
     }
+    console.log(data)
 
     if (req?.files?.length > 0) {
       data.images = req.files?.map((file: any) => {
         return file.path
       })
     }
+    console.log(data)
 
     const result = await outfits.findByIdAndUpdate(
       req.params.id,
