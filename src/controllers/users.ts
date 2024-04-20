@@ -408,11 +408,20 @@ export const getFavs = async (req: any, res: express.Response) => {
       .findById(req.user._id, 'favorites')
       .populate({
         path: 'favorites',
-        populate: {
-          path: 'ratings',
-          select: 'score _id' // 只返回 score 和 _id 字段
-        }
+        populate: [
+          {
+            path: 'ratings',
+            select: 'score _id' // 只返回 score 和 _id 字段
+          },
+          {
+            path: 'colors'
+          },
+          {
+            path: 'sizes'
+          }
+        ]
       })
+
     console.log(result)
     res
       .status(200)
