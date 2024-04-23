@@ -9,11 +9,16 @@ import admins from '../models/admins'
 
 export const createOutfit = async (req: any, res: express.Response) => {
   try {
+    console.log(req.body.products)
+    const products = Array.isArray(req.body.products)
+      ? req.body.products.map((item: any) => JSON.parse(item))
+      : [JSON.parse(req.body.products)]
+
     const result = await outfits.create({
       outfitName: req.body.outfitName,
       description: req.body.description,
       clerk: req.body.clerk,
-      products: req.body.products.map((item: any) => JSON.parse(item)),
+      products,
       show: req.body.show,
       images:
         req.files?.map((file: any) => {
@@ -22,6 +27,7 @@ export const createOutfit = async (req: any, res: express.Response) => {
     })
     res.status(200).send({ success: true, message: '', result })
   } catch (error: any) {
+    console.log(error)
     if (error.name === 'ValidationError') {
       const key = Object.keys(error.errors)[0]
       const message = error.errors[key].message
@@ -160,10 +166,19 @@ export const getOutfit = async (
 
 export const editOutfit = async (req: any, res: express.Response) => {
   try {
+    console.log(req.body.products.length)
+    console.log(Array.isArray(req.body.products))
+
+    const products = Array.isArray(req.body.products)
+      ? req.body.products.map((item: any) => JSON.parse(item))
+      : [JSON.parse(req.body.products)]
+
+    console.log(products)
+
     const data: any = {
       outfitName: req.body.outfitName,
       description: req.body.description,
-      products: req.body.products.map((item: any) => JSON.parse(item)),
+      products,
       show: req.body.show
     }
     console.log(data)
