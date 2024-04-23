@@ -13,7 +13,7 @@ export const createOutfit = async (req: any, res: express.Response) => {
       outfitName: req.body.outfitName,
       description: req.body.description,
       clerk: req.body.clerk,
-      products: req.body.products,
+      products: req.body.products.map((item: any) => JSON.parse(item)),
       show: req.body.show,
       images:
         req.files?.map((file: any) => {
